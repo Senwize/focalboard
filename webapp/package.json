@@ -60,7 +60,9 @@
 		"react-redux": "^7.2.4",
 		"react-router-dom": "^5.2.0",
 		"react-select": "^4.3.0",
-		"trim-newlines": "^4.0.2"
+		"trim-newlines": "^4.0.2",
+		"vis-data": "^7.1.2",
+		"vis-timeline": "^7.5.0"
 	},
 	"jest": {
 		"moduleNameMapper": {

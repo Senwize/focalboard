@@ -200,6 +200,37 @@ const ViewMenu = React.memo((props: Props) => {
             })
     }, [props.board, props.activeView, props.intl, showView])
 
+    const handleAddTimeline = useCallback(() => {
+        const {board, activeView, intl} = props
+
+        Utils.log('addview-timeline')
+        const view = createBoardView()
+        view.title = intl.formatMessage({id: 'View.NewTimelineTitle', defaultMessage: 'Timeline view'})
+        view.fields.viewType = 'timeline'
+        view.parentId = board.id
+        view.rootId = board.rootId
+        view.fields.visiblePropertyIds = [Constants.titleColumnId]
+
+        const oldViewId = activeView.id
+
+        // Find first date property
+        view.fields.dateDisplayPropertyId = board.fields.cardProperties.find((o: IPropertyTemplate) => o.type === 'date')?.id
+
+        mutator.insertBlock(
+            view,
+            'add view',
+            async (block: Block) => {
+                // This delay is needed because WSClient has a default 100 ms notification delay before updates
+                setTimeout(() => {
+                    Utils.log(`showView: ${block.id}`)
+                    showView(block.id)
+                }, 120)
+            },
+            async () => {
+                showView(oldViewId)
+            })
+    }, [props.board, props.activeView, props.intl, showView])
+
     const {views, intl} = props
 
     const duplicateViewText = intl.formatMessage({
@@ -226,6 +257,10 @@ const ViewMenu = React.memo((props: Props) => {
         id: 'View.Gallery',
         defaultMessage: 'Gallery',
     })
+    const timelineText = intl.formatMessage({
+        id: 'View.Timeline',
+        defaultMessage: 'Timeline',
+    })
 
     const iconForViewType = (viewType: IViewType) => {
         switch (viewType) {
@@ -233,6 +268,7 @@ const ViewMenu = React.memo((props: Props) => {
         case 'table': return <TableIcon/>
         case 'gallery': return <GalleryIcon/>
         case 'calendar': return <CalendarIcon/>
+        case 'timeline': return <CalendarIcon/>
         default: return <div/>
         }
     }
@@ -293,6 +329,12 @@ const ViewMenu = React.memo((props: Props) => {
                         name='Calendar'
                         icon={<CalendarIcon/>}
                         onClick={handleAddViewCalendar}
+                    />
+                    <Menu.Text
+                        id='timeline'
+                        name={timelineText}
+                        icon={<CalendarIcon/>}
+                        onClick={handleAddTimeline}
                     />
                 </Menu.SubMenu>
             }

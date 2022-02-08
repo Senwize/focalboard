@@ -31,6 +31,7 @@ import TopBar from './topBar'
 import ViewHeader from './viewHeader/viewHeader'
 import ViewTitle from './viewTitle'
 import Kanban from './kanban/kanban'
+import Timeline from './timeline/timeline'
 
 import Table from './table/table'
 
@@ -219,6 +220,14 @@ class CenterPanel extends React.Component<Props, State> {
                         selectedCardIds={this.state.selectedCardIds}
                         addCard={(show) => this.addCard('', show)}
                     />}
+
+                {activeView.fields.viewType === 'timeline' &&
+                    <Timeline
+                        board={this.props.board}
+                        cards={this.props.cards}
+                        onCardClicked={this.cardClicked}
+                        addCard={this.addCard.bind(this)}
+                    />}
             </div>
         )
     }
@@ -349,7 +358,7 @@ class CenterPanel extends React.Component<Props, State> {
                 }
                 this.setState({selectedCardIds})
             }
-        } else if (activeView.fields.viewType === 'board' || activeView.fields.viewType === 'gallery') {
+        } else if (['board', 'gallery', 'timeline'].includes(activeView.fields.viewType)) {
             this.showCard(card.id)
         }
 
